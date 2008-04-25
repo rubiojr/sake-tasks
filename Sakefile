@@ -1,0 +1,57 @@
+# vim: syntax=Ruby
+
+namespace :ssh do
+  desc "Install your public key on a remote server."
+  task :install_public_key do
+    begin
+      require 'rubygems'
+      require 'net/ssh'
+      require 'net/scp'
+    rescue LoadError
+      abort "There was a problem loading Net::SSH or Net::SCP, please make sure you have them installed via RubyGems."
+    end
+
+    public_key_path = ENV["my_public_key"] || ENV["HOME"] + "/.ssh/id_rsa.pub"
+
+    puts "I need some info.  Please provide the following:"
+    print "Remote hostname: "
+    hostname = $stdin.gets.chomp
+
+    print "Username: "
+    username = $stdin.gets.chomp
+
+    print "Password (watch out, it's going to show up plain text!): "
+    password = $stdin.gets.chomp
+
+    begin
+      puts "\nAttempting to connect.  I will be copying over the following SSH key:" 
+      puts public_key_path
+      puts "You can override this path by providing me with a 'my_public_key'"
+      puts "variable at the command line.\n"
+
+      Net::SSH.start(hostname, username, :password => password) do |ssh|
+        puts "\nUploading your public key... "
+        ssh.scp.upload! public_key_path, "my_public_key"
+
+        puts "Creating '.ssh' directory in your home directory"
+        ssh.exec!("mkdir .ssh")
+
+        puts "Concatenating your public key into the authorized_keys file"
+        ssh.exec!("cat my_public_key >> .ssh/authorized_keys")
+
+        puts "Removing your public key"
+        ssh.exec!("rm my_public_key")
+
+        puts "Setting permissions on .ssh"
+        ssh.exec!("chmod 700 .ssh")
+
+        puts "Setting permissions on your authorized_keys file"
+        ssh.exec!("chmod 600 .ssh/authorized_keys")
+
+        puts "\nAll done!  Enjoy your new, potentially password-free login."
+      end
+    rescue Net::SSH::AuthenticationFailed
+      puts "\nWhat we've got here... is a failure to communicate.  There was a problem authenticating you."
+    end
+  end
+end
