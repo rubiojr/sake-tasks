@@ -7,30 +7,29 @@ namespace :ssh do
       require 'rubygems'
       require 'net/ssh'
       require 'net/scp'
+      require 'highline'
     rescue LoadError
-      abort "There was a problem loading Net::SSH or Net::SCP, please make sure you have them installed via RubyGems."
+      abort "There was a problem loading net-ssh, net-scp, or highline.  Please make sure you have them installed via RubyGems."
     end
 
-    public_key_path = ENV["my_public_key"] || ENV["HOME"] + "/.ssh/id_rsa.pub"
+    public_key_path = ENV["public_key_path"] || ENV["HOME"] + "/.ssh/id_rsa.pub"
+    unless File.exists?(public_key_path)
+      abort "I can't find your public key file.  I was looking for it at: #{public_key_path}\n" +
+      "You can pass me a 'public_key_path' variable via the command line to specify a different file."
+    end
 
-    puts "I need some info.  Please provide the following:"
-    print "Remote hostname: "
-    hostname = $stdin.gets.chomp
+    h = HighLine.new
+    not_blank = Proc.new { |s| !s.empty? }
+    def not_blank.to_s; "not blank"; end
 
-    print "Username: "
-    username = $stdin.gets.chomp
-
-    print "Password (watch out, it's going to show up plain text!): "
-    password = $stdin.gets.chomp
+    h.say "I need some information to SSH into the server."
+    hostname = h.ask("Remote Hostname: ") { |q| q.validate = not_blank }
+    username = h.ask("Username, enter for default: ") { |q| q.default = ENV["USER"] }
+    password = h.ask("Password: ") { |q| q.echo = "*" }
 
     begin
-      puts "\nAttempting to connect.  I will be copying over the following SSH key:" 
-      puts public_key_path
-      puts "You can override this path by providing me with a 'my_public_key'"
-      puts "variable at the command line.\n"
-
       Net::SSH.start(hostname, username, :password => password) do |ssh|
-        puts "\nUploading your public key... "
+        puts "Uploading your public key... "
         ssh.scp.upload! public_key_path, "my_public_key"
 
         puts "Creating '.ssh' directory in your home directory"
