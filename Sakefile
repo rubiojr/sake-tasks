@@ -12,10 +12,20 @@ namespace :ssh do
       abort "There was a problem loading net-ssh, net-scp, or highline.  Please make sure you have them installed via RubyGems."
     end
 
-    public_key_path = ENV["public_key_path"] || ENV["HOME"] + "/.ssh/id_rsa.pub"
-    unless File.exists?(public_key_path)
-      abort "I can't find your public key file.  I was looking for it at: #{public_key_path}\n" +
-      "You can pass me a 'public_key_path' variable via the command line to specify a different file."
+    public_key = if ENV["public_key_path"]
+      if File.exists?(ENV["public_key_path"]) then ENV["public_key_path"] 
+      else abort "The key you provided via the command line does not exist!"
+      end
+    else
+      #discovered_key = %w[id_rsa id_dsa identity].detect { |f| File.exists?("#{ENV['HOME']}/.ssh/#{f}.pub") }
+      discovered_key = %w[identity].detect { |f| File.exists?("#{ENV['HOME']}/.ssh/#{f}.pub") }
+      if discovered_key then discovered_key
+      else abort <<-EOS
+I wasn't able to discover your public key.  I tried to find id_rsa.pub, id_dsa.pub,
+or identity.pub in "#{ENV['HOME']}/.ssh".  You can hard code the path to the file by 
+passing public_key_path via the command line.
+        EOS
+      end
     end
 
     h = HighLine.new
