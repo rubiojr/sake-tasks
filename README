@@ -2,7 +2,7 @@ It's the marvelous Sake, system-wide Rake.
 http://errtheblog.com/posts/60-sake-bomb
 
 List the tasks:
-sake -T "http://github.com/dpetersen/sake-tasks/tree/master/Sakefile?raw=true"
+sake -T "http://github.com/lukemelia/sake-tasks/tree/master/Sakefile?raw=true"
 
 Install them all:
-sake -i "http://github.com/dpetersen/sake-tasks/tree/master/Sakefile?raw=true"
+sake -i "http://github.com/lukemelia/sake-tasks/tree/master/Sakefile?raw=true"

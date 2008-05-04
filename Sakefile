@@ -1,5 +1,27 @@
 # vim: syntax=Ruby
 
+namespace :git
+  namespace :analyze do  
+    namespace :commits do
+      desc 'Flog the most commonly revised files in the git history'
+      task :flog_frequent do
+        counts = Hash.new(0)
+        IO.popen("PAGER=cat git log --name-only --pretty=oneline 2>&1") do |pipe|
+          while (!pipe.eof) do
+            line = pipe.readline
+            next unless line =~ /^(app|lib).*\.rb$/
+            counts[line.chomp] += 1
+          end
+        end
+        counts.sort_by{|item| item.last}.reverse.first(15).each do |item|
+          flog_score = `flog -s #{item.first}`.to_f.round
+          puts "#{item.first} (in #{item.last} commits) (Flog: #{flog_score})"
+        end
+      end
+    end
+  end
+end
+
 namespace :ssh do
   desc "Install your public key on a remote server."
   task :install_public_key do
