@@ -126,8 +126,7 @@ namespace :ssh do
       else abort "The key you provided via the command line does not exist!"
       end
     else
-      #discovered_key = %w[id_rsa id_dsa identity].detect { |f| File.exists?("#{ENV['HOME']}/.ssh/#{f}.pub") }
-      discovered_key = %w[identity].detect { |f| File.exists?("#{ENV['HOME']}/.ssh/#{f}.pub") }
+      discovered_key = %w[id_rsa id_dsa identity].detect { |f| File.exists?("#{ENV['HOME']}/.ssh/#{f}.pub") }
       if discovered_key then discovered_key
       else abort <<-EOS
 I wasn't able to discover your public key.  I tried to find id_rsa.pub, id_dsa.pub,
