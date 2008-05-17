@@ -1,5 +1,43 @@
 # vim: syntax=Ruby
 
+namespace :mysql do
+  task :params => :environment do
+    ENV['DEFAULT_DB_DUMP_NAME'] = File.join(RAILS_ROOT, 'db',
+                                         "#{RAILS_ENV}-content.sql.gz")
+    
+    config = ActiveRecord::Base.configurations[RAILS_ENV]
+    ENV['MYSQL_PARAMS'] = {
+      :host => "-h",
+      :username => "-u",
+      :password => "-p",
+      :database => nil
+    }.map { |key, option|
+      value = config[key] || config[key.to_s]
+      "#{option}#{value}" if value
+    }.join(' ')
+  end
+  
+  desc "Dump the database to FILE (depends on mysql:params)"
+  task :dump => 'mysql:params' do
+    fname = ENV['FILE'] || ENV['DEFAULT_DB_DUMP_NAME']
+    zipper = '| gzip' if fname =~ /\.gz$/
+    cmd = "mysqldump --add-drop-table --add-locks -K -e #{ENV['MYSQL_PARAMS']} #{zipper} > #{fname}"
+    sh cmd
+  end
+
+  desc "Load the database from FILE (depends on mysql:params)"
+  task :load => 'mysql:params' do
+    fname = ENV['FILE'] || ENV['DEFAULT_DB_DUMP_NAME']
+    if fname =~ /\.gz$/
+      cmd = "gunzip < #{fname} | mysql #{ENV['MYSQL_PARAMS']}"
+    else
+      cmd = "mysql #{ENV['MYSQL_PARAMS']} < #{fname}"
+    end
+    sh cmd
+  end
+
+end
+
 namespace :git do
 
   desc "Show the current status of the checkout"
