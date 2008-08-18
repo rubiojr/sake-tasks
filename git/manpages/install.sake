@@ -1,0 +1,21 @@
+namespace :git do
+
+  namespace :manpages do
+    desc "Install man pages for current git version"
+    task :install do
+      # process comes from http://subtlegradient.com/articles/2008/02/21/install_git_leopard
+      unless git_version = `git --version`.scan(/[\d.]+/)[0]
+        puts "Git not installed or 'git --version' not returning format 'git version A.B.C.D'"
+        exit
+      end
+      puts "Installing manpages for git #{git_version}"
+      require "fileutils"
+      FileUtils.chdir '/tmp' do
+        puts "Downloading and unpacking manpages in #{`pwd`}"
+        `curl -O "http://kernel.org/pub/software/scm/git/git-manpages-#{git_version}.tar.bz2"`
+        puts `sudo tar xjv -C /usr/local/share/man -f git-manpages-#{git_version}.tar.bz2`
+      end
+      puts "Test your git manpages by trying the command: man git"
+    end
+  end
+end
