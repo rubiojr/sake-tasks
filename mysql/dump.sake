@@ -1,0 +1,9 @@
+namespace :mysql do
+  desc "Dump the database to FILE (depends on mysql:params)"
+  task :dump => 'mysql:params' do
+    fname = ENV['FILE'] || ENV['DEFAULT_DB_DUMP_NAME']
+    zipper = '| gzip' if fname =~ /\.gz$/
+    cmd = "mysqldump --add-drop-table --add-locks -K -e #{ENV['MYSQL_PARAMS']} #{zipper} > #{fname}"
+    sh cmd
+  end
+end

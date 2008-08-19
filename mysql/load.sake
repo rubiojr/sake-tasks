@@ -1,0 +1,12 @@
+namespace :mysql do
+  desc "Load the database from FILE (depends on mysql:params)"
+  task :load => 'mysql:params' do
+    fname = ENV['FILE'] || ENV['DEFAULT_DB_DUMP_NAME']
+    if fname =~ /\.gz$/
+      cmd = "gunzip < #{fname} | mysql #{ENV['MYSQL_PARAMS']}"
+    else
+      cmd = "mysql #{ENV['MYSQL_PARAMS']} < #{fname}"
+    end
+    sh cmd
+  end
+end

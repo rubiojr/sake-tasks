@@ -1,0 +1,17 @@
+namespace :mysql do
+  task :params => :environment do
+    ENV['DEFAULT_DB_DUMP_NAME'] = File.join(RAILS_ROOT, 'db',
+                                         "#{RAILS_ENV}-content.sql.gz")
+    
+    config = ActiveRecord::Base.configurations[RAILS_ENV]
+    ENV['MYSQL_PARAMS'] = {
+      :host => "-h",
+      :username => "-u",
+      :password => "-p",
+      :database => nil
+    }.map { |key, option|
+      value = config[key] || config[key.to_s]
+      "#{option}#{value}" if value
+    }.join(' ')
+  end
+end
