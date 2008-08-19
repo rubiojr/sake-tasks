@@ -56,6 +56,23 @@ So, to create a task `foo:bar:baz`, you'll need to add a folder `foo/bar` and cr
 	  end
 	end
 
+### Installing individual tasks/files
+
+The `rake install` task can selectively install only tasks/files that you are working on, rather than all the files in your repository, using either the `ONLY_FILES` or `ONLY_TASKS` environment variable.
+
+For example, to restrict `rake install` to only re-install a task `foo:bar:baz` you can either use:
+
+	rake install ONLY_FILES=foo/bar/baz.sake
+	rake install ONLY_TASKS=foo:bar:baz
+
+The values can be comma-separated lists.
+
+So for iterative install & run development you could run the install task and the sake task via the same command line:
+
+	rake install ONLY_TASKS=foo:bar:baz && sake foo:bar:baz --trace
+
+The optional `--trace` runs sake in trace mode so useful stacktrace information is given as necessary.
+
 ### TextMate users
 
 The latest [Ruby.tmbundle](http://github.com/drnic/ruby-tmbundle) on github includes a `task` command that generates the above namespace/task snippet based on the path + file name. That is, inside the `foo/bar/baz.sake` file, make sure your grammar is 'Ruby' or 'Ruby on Rails' and then type "task" and press TAB. The above snippet will be generated ready for you to specify your task.
