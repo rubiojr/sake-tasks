@@ -23,6 +23,9 @@ http://errtheblog.com/posts/60-sake-bomb
 
 The following sake tasks are installed:
 
+  sake check:erb                           # Find all .erb or .rhtml files in the current directory tree and report any syntax errors
+  sake check:ruby                          # Find all .rb files in the current directory tree and report any syntax errors
+  sake check:yaml                          # Find all .yml files in the current directory tree and report any syntax errors
 	sake git:analyze:commits:flog_frequent   # Flog the most commonly revised files in the git history
 	sake git:close                           # Delete the current branch and switch back to master
 	sake git:manpages:install                # Install man pages for current git version

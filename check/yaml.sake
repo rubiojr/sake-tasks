@@ -1,0 +1,15 @@
+namespace :check do
+  desc "Find all .yml files in the current directory tree and report any syntax errors"
+  task :yaml do
+    require 'yaml'
+    Dir['**/*.yml'].each do |file|
+      next if file.match("vendor/rails")
+      begin
+        YAML.load_file(file)
+      rescue => e
+        puts "#{file}:#{(e.message.match(/on line (\d+)/)[1] + ':') rescue nil} #{e.message}"
+      end
+    end
+  end
+end
+
