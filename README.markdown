@@ -34,6 +34,7 @@ The following sake tasks are installed:
 	sake git:pull                            # Pull new commits from the repository
 	sake git:push                            # Push all changes to the repository
 	sake git:rebase                          # Pull new commits from the SVN repository
+	sake git:src:install                     # Downloads and installs latest version of git
 	sake git:status                          # Show the current status of the checkout
 	sake git:topic                           # Create a new topic branch
 	sake git:update                          # Pull new commits from the repository
