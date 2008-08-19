@@ -8,4 +8,17 @@ task :install do
   end
 end
 
+desc "Run latest source of task"
+task :testrun do
+  task_names = ARGV.grep(/(.+:)+/)
+  
+  task_names.each do |task_name|
+    sake_file = task_name.gsub(':','/') + '.sake'
+    import(sake_file) if File.exists?(sake_file)
+
+    Rake.application.load_imports
+    (task_names << Rake::Task[task_name].prerequisites).flatten!
+  end
+end
+
 task :default => :install
