@@ -19,6 +19,23 @@ To see your list of resulting tasks:
 It's the marvelous Sake, system-wide Rake.  
 http://errtheblog.com/posts/60-sake-bomb
 
+## Current tasks
+
+The following sake tasks are installed:
+
+	sake git:analyze:commits:flog_frequent   # Flog the most commonly revised files in the git history
+	sake git:close                           # Delete the current branch and switch back to master
+	sake git:manpages:install                # Install man pages for current git version
+	sake git:open                            # Create a new branch off master
+	sake git:pull                            # Pull new commits from the repository
+	sake git:push                            # Push all changes to the repository
+	sake git:status                          # Show the current status of the checkout
+	sake git:topic                           # Create a new topic branch
+	sake git:update                          # Pull new commits from the repository
+	sake mysql:dump                          # Dump the database to FILE (depends on mysql:params)
+	sake mysql:load                          # Load the database from FILE (depends on mysql:params)
+	sake ssh:install_public_key              # Install your public key on a remote server.
+
 ## Adding new recipes/tasks
 
 The installer rake task `rake install` works by assuming that each `.sake` file contains one sake task. This allows it to uninstall the task from sake first, and then re-install it (sake barfs if you attempt to reinstall an existing task).
