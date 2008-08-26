@@ -8,7 +8,7 @@ Or replace 'drnic' with your github username if you have forked the sake-tasks r
 
 Then install the sake tasks (this step is repeatable, even if one or more tasks are already exist; that is, any pre-existing tasks with the same name will be overridden)
 
-	rake install
+	rake install:all
 
 To see your list of resulting tasks:
 
@@ -44,7 +44,7 @@ The following sake tasks are installed:
 
 ## Adding new recipes/tasks
 
-The installer rake task `rake install` works by assuming that each `.sake` file contains one sake task. This allows it to uninstall the task from sake first, and then re-install it (sake barfs if you attempt to reinstall an existing task).
+The installer rake task `rake install:all` works by assuming that each `.sake` file contains one sake task. This allows it to uninstall the task from sake first, and then re-install it (sake barfs if you attempt to reinstall an existing task).
 
 So, to create a task `foo:bar:baz`, you'll need to add a folder `foo/bar` and create a file `baz.sake` inside it. Within that file you would then specify your task using `namespace` and `task` method calls:
 
@@ -67,20 +67,24 @@ To run the local version of foo/bar/baz.sake, use:
 
 ### Installing individual tasks/files
 
-The `rake install` task can selectively install only tasks/files that you are working on, rather than all the files in your repository, using either the `ONLY_FILES` or `ONLY_TASKS` environment variable.
+You can selectively install only tasks/files that you are working on, rather than all the files in your repository, or just install the most recently modified sake file.
 
-For example, to restrict `rake install` to only re-install a task `foo:bar:baz` you can either use:
+To install the latest modified sake file:
 
-	rake install ONLY_FILES=foo/bar/baz.sake
-	rake install ONLY_TASKS=foo:bar:baz
+	rake install:latest
+
+To restrict `rake install:all` to only re-install a task `foo:bar:baz` you can either use:
+
+	rake install:file f=foo/bar/baz.sake
+	rake install:task t=foo:bar:baz
 
 The values can be comma-separated lists.
 
 So for iterative install & run development you could run the install task and the sake task via the same command line:
 
-	rake install ONLY_TASKS=foo:bar:baz && sake foo:bar:baz --trace
+	rake install:task t=foo:bar:baz && sake foo:bar:baz --trace
 
-The optional `--trace` runs sake in trace mode so useful stacktrace information is given as necessary.
+The optional `--trace` runs sake in trace mode so useful stacktrace information is given as necessary. Ultimately you'd probably use `rake testrun foo:bar:baz` as above.
 
 ### TextMate users
 
