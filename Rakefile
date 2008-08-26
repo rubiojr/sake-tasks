@@ -75,4 +75,5 @@ task :testrun do
   end
 end
 
+task :install => "install:all"
 task :default => "install:all"
