@@ -1,9 +1,7 @@
 namespace :once do
   task :check_number do
     require 'rubygems'
-    require 'open-uri'
     require 'hpricot'
-    require 'iconv'
     require 'mechanize'
 
     ARGV.shift
