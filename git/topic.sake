@@ -1,0 +1,17 @@
+namespace :git do
+  desc "Create a new topic branch"
+  task :topic do
+    require 'readline'
+    total = `git branch`.scan("quick").size
+    if total == 0
+      default = "quick"
+    else
+      default = "quick#{total + 1}"
+    end
+    name = Readline.readline "Topic name (default #{default}): "
+    if name.strip.empty?
+      name = default
+    end
+    sh "git checkout -b #{name}"
+  end
+end

@@ -1,0 +1,19 @@
+namespace :check do
+  desc "Find all .erb or .rhtml files in the current directory tree and report any syntax errors"
+  task :erb do
+    require 'erb'
+    require 'open3'
+    (Dir["**/*.erb"] + Dir["**/*.rhtml"]).each do |file|
+      next if file.match("vendor/rails")
+      Open3.popen3('ruby -c') do |stdin, stdout, stderr|
+        stdin.puts(ERB.new(File.read(file), nil, '-').src)
+        stdin.close
+        error = stderr.readline rescue false
+        puts "#{file}:#{(error.match(/on line (\d+)/)[1] + ':') rescue nil} #{error}" if error
+        puts error if error
+        stdout.close rescue false
+        stderr.close rescue false
+      end
+    end
+  end
+end

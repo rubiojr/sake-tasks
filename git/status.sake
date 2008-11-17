@@ -1,0 +1,6 @@
+namespace :git do
+  desc "Show the current status of the checkout"
+  task :status do
+    system "git status"
+  end
+end
