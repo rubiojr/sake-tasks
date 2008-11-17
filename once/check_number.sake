@@ -1,0 +1,39 @@
+namespace :once do
+  task :check_number do
+    require 'rubygems'
+    require 'open-uri'
+    require 'hpricot'
+    require 'iconv'
+    require 'mechanize'
+
+    ARGV.shift
+    if ARGV.size < 3
+      puts "Usage: sake once:check_number <fecha> <numero> <serie>"
+      exit 1
+    end
+
+    date = ARGV.shift
+    number = ARGV.shift
+    serie = ARGV.shift
+    
+    begin
+      Date.parse date
+    rescue Exception
+      puts "Fecha inválida"
+      exit 1
+    end
+
+    raise Exception.new("Número no válido") if number.to_i == 0 or number.size != 5
+    raise Exception.new("Serie no válida") if serie.to_i == 0 or serie.size != 3
+
+    agent = WWW::Mechanize.new
+    doc = agent.get("http://www.once.es/new/juegos/cupon/comprueba/index_html?fecha=#{date}C&serie=#{serie}&numero=#{number}&enviado=1")
+    html = doc.search('#resultadosCupon').to_html.gsub('&uacute;','ú').gsub('&euro;', 'Euros').gsub('&oacute;', 'ó')
+    doc = Hpricot(html)/'#resultadosCupon'
+
+    doc.each do |e|
+      puts e.innerText.split.join " "
+    end
+    exit
+  end
+end
